@@ -1,0 +1,84 @@
+import argparse
+import sys
+import os
+from random import randint as rand
+
+def data_reader(data_file):
+    '''Read data
+    Input: data_file=string (file path to the data from pwd)
+    Output: data=the content of the data as a list of lists, where
+            each sublist is a row of data'''
+    f = open(data_file)
+    data = []
+    i = 0
+    for line in f.readlines():
+        line = [float(x) for x in line.split()]
+        data.append([])
+        for j in range(len(line)):
+            data[i].append(line[j])
+        i += 1
+    f.close()
+    return data
+
+def labels_reader(labels_file):
+    '''Read labels
+    Input: data_file=string (file path to the data from pwd)
+    Output: label_lines=the labels content formatted for this script
+            max_label=the maximum value of the labels used for initializing class_ array later'''
+    f = open(labels_file)
+    label_lines = []
+    for line in f.readlines():
+        a = [int(x) for x in line.split()]
+        label_lines.append(a)
+    f.close()
+    return label_lines
+
+def class_maker(label_lines):
+    '''Identifies the classes of the input labels
+    Input: label_lines=list of labels from labels_reader
+           max_label=the label holding the maximum value
+    Output: y=list of classes
+            class_size=the count of classes [count(0), count(1)]'''
+    class_d = {}
+    class_size = [0,0]
+    for line in label_lines:
+        class_d[line[1]] = line[0]
+        class_size[line[0]] = class_size[line[0]] + 1
+        if class_d[line[1]] == 0: class_d[line[1]] = -1 #if class is 0, reassign to -1
+    return class_d, class_size
+
+#training model
+#test model
+#chi square feature selection probably
+#input: dataset and labels
+#feature extraction
+#feature ranking
+
+def parse_options():
+    parser = argparse.ArgumentParser(description="Term Project combining Feature Selection with Classification")
+    parser.add_argument("data_file", help="path to the data file")
+    parser.add_argument("labels_file", help="path to the labels file")
+    parser.add_argument("test_file", help="path to the test data file")
+    ret_args = parser.parse_args()
+    return ret_args
+
+
+#order:
+#readin data
+#rank features
+#train
+#test
+#write output
+
+if __name__ == "__main__":
+    args = parse_options()
+    data_filepath, labels_filepath, test_filepath = args.data_file, args.labels_file, args.test_file    
+    #print("data file path: {}".format(data_filepath))
+    #print("labels file path: {}".format(labels_filepath))
+    data_content = data_reader(data_filepath)
+    label_content = labels_reader(labels_filepath)
+    classes, class_sizes = class_maker(label_content)
+
+#test_data = "C:\\Users\\watson\\Documents\\Schoolwork\\cs675\\project\\testdata.txt"
+#train_data = "C:\\Users\\watson\\Documents\\Schoolwork\\cs675\\project\\traindata.txt"
+#train_labels = "C:\\Users\\watson\\Documents\\Schoolwork\\cs675\\project\\trainlabels.txt"
